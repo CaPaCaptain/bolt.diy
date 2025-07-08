@@ -216,18 +216,26 @@ const PROVIDER_LIST: ProviderInfo[] = [
         maxTokenAllowed: 8000,
       },
     ],
-    getApiKeyLink: 'https://huggingface.co/settings/tokens',
+    getApiKeyLink: 'https://aistudio.google.com/app/apikey',
   },
-
   {
-    name: 'OpenAI',
+    name: 'CP-Gemini',
     staticModels: [
-      { name: 'gpt-4o-mini', label: 'GPT-4o Mini', provider: 'OpenAI', maxTokenAllowed: 8000 },
-      { name: 'gpt-4-turbo', label: 'GPT-4 Turbo', provider: 'OpenAI', maxTokenAllowed: 8000 },
-      { name: 'gpt-4', label: 'GPT-4', provider: 'OpenAI', maxTokenAllowed: 8000 },
-      { name: 'gpt-3.5-turbo', label: 'GPT-3.5 Turbo', provider: 'OpenAI', maxTokenAllowed: 8000 },
+      { name: 'gemini-2.5-flash', label: 'Gemini 2.5 Flash', provider: 'CP-Gemini', maxTokenAllowed: 24576 },
+      { name: 'gemini-2.5-pro', label: 'Gemini 2.5 Pro', provider: 'CP-Gemini', maxTokenAllowed: 52428 },
     ],
-    getApiKeyLink: 'https://platform.openai.com/api-keys',
+    getApiKeyLink: 'https://catptain-geminibalance.hf.space',
+  },
+  {
+    name: 'Groq',
+    staticModels: [
+      { name: 'llama-3.1-70b-versatile', label: 'Llama 3.1 70b (Groq)', provider: 'Groq', maxTokenAllowed: 8000 },
+      { name: 'llama-3.1-8b-instant', label: 'Llama 3.1 8b (Groq)', provider: 'Groq', maxTokenAllowed: 8000 },
+      { name: 'llama-3.2-11b-vision-preview', label: 'Llama 3.2 11b (Groq)', provider: 'Groq', maxTokenAllowed: 8000 },
+      { name: 'llama-3.2-3b-preview', label: 'Llama 3.2 3b (Groq)', provider: 'Groq', maxTokenAllowed: 8000 },
+      { name: 'llama-3.2-1b-preview', label: 'Llama 3.2 1b (Groq)', provider: 'Groq', maxTokenAllowed: 8000 },
+    ],
+    getApiKeyLink: 'https://console.groq.com/keys',
   },
   {
     name: 'xAI',
@@ -318,14 +326,14 @@ export async function getModelList(
 
 async function getTogetherModels(apiKeys?: Record<string, string>, settings?: IProviderSetting): Promise<ModelInfo[]> {
   try {
-    const baseUrl = settings?.baseUrl || import.meta.env.TOGETHER_API_BASE_URL || '';
+    const baseUrl = settings?.baseUrl || process.env.TOGETHER_API_BASE_URL || '';
     const provider = 'Together';
 
     if (!baseUrl) {
       return [];
     }
 
-    let apiKey = import.meta.env.OPENAI_LIKE_API_KEY ?? '';
+    let apiKey = process.env.OPENAI_LIKE_API_KEY ?? '';
 
     if (apiKeys && apiKeys[provider]) {
       apiKey = apiKeys[provider];
@@ -358,7 +366,7 @@ async function getTogetherModels(apiKeys?: Record<string, string>, settings?: IP
 }
 
 const getOllamaBaseUrl = (settings?: IProviderSetting) => {
-  const defaultBaseUrl = settings?.baseUrl || import.meta.env.OLLAMA_API_BASE_URL || 'http://localhost:11434';
+  const defaultBaseUrl = settings?.baseUrl || process.env.OLLAMA_API_BASE_URL || 'http://localhost:11434';
 
   // Check if we're in the browser
   if (typeof window !== 'undefined') {
@@ -401,7 +409,7 @@ async function getOpenAILikeModels(
   settings?: IProviderSetting,
 ): Promise<ModelInfo[]> {
   try {
-    const baseUrl = settings?.baseUrl || import.meta.env.OPENAI_LIKE_API_BASE_URL || '';
+    const baseUrl = settings?.baseUrl || process.env.OPENAI_LIKE_API_BASE_URL || '';
 
     if (!baseUrl) {
       return [];
@@ -470,7 +478,7 @@ async function getLMStudioModels(_apiKeys?: Record<string, string>, settings?: I
   }
 
   try {
-    const baseUrl = settings?.baseUrl || import.meta.env.LMSTUDIO_API_BASE_URL || 'http://localhost:1234';
+    const baseUrl = settings?.baseUrl || process.env.LMSTUDIO_API_BASE_URL || 'http://localhost:1234';
     const response = await fetch(`${baseUrl}/v1/models`);
     const data = (await response.json()) as any;
 
